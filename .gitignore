@@ -1,0 +1,25 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+env/
+.env/
+
+# IDE files
+.vscode/
+.idea/
+
+# Local cache / downloaded HTML exports
+*.html
+*_files/
+
+# Temporary run artifacts
+runs/
+.pytest_cache/

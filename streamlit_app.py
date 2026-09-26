@@ -49,6 +49,11 @@ st.markdown(
         padding: 12px 16px;
         text-align: center;
     }
+    .pixelated-view img {
+        image-rendering: pixelated !important;
+        image-rendering: -moz-crisp-edges !important;
+        image-rendering: crisp-edges !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -360,12 +365,13 @@ def main():
         mode = st.radio(
             "Select Enhancement Mode:",
             [
-                "Auto-Detect",
                 "4× Super-Resolution (Small / Sensor Native)",
                 "Restore at Same Size (Pre-stretched Blur)",
+                "Auto-Detect",
             ],
+            index=0,
             horizontal=True,
-            help="Auto-Detect selects 4x for raw sensor resolutions (<=160x120) and Same-Size restoration for larger blurry thermal images.",
+            help="4× Super-Resolution directly upscales raw low-resolution thermal captures 4× spatially.",
         )
 
     with col_sample:
@@ -412,8 +418,10 @@ def main():
     with tab_side:
         col_left, col_right = st.columns(2)
         with col_left:
-            st.markdown(f"**Original Thermal Input** (`{orig_w}×{orig_h}`)")
+            st.markdown(f"**Original LR Thermal Input (Sensor Pixels)** (`{orig_w}×{orig_h}`)")
+            st.markdown('<div class="pixelated-view">', unsafe_allow_html=True)
             st.image(input_img, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
         with col_right:
             st.markdown(f"**Super-Resolved Thermal Output** (`{new_w}×{new_h}`)")
             st.image(result_img, use_container_width=True)

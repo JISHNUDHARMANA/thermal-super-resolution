@@ -342,6 +342,17 @@ def main():
     st.sidebar.markdown("**Scaling Factor:** `4× Spatial`")
 
     st.sidebar.divider()
+    st.sidebar.markdown("### 🖼️ Display Size")
+    display_width = st.sidebar.slider(
+        "Image Display Width (px):",
+        min_value=260,
+        max_value=720,
+        value=480,
+        step=20,
+        help="Adjust the display size of the thermal output image on screen.",
+    )
+
+    st.sidebar.divider()
     st.sidebar.markdown("### 📖 How to Use")
     st.sidebar.markdown(
         "1. Upload any low-resolution thermal image (or click **🧪 Use Sample**).\n"
@@ -379,20 +390,30 @@ def main():
 
     # Determine input image
     input_img = None
+    input_id = None
     if uploaded_file is not None:
         input_img = Image.open(uploaded_file).convert('RGB')
+        input_id = f"upload_{uploaded_file.name}_{uploaded_file.size}"
     elif use_sample or 'sample_img' in st.session_state:
         if use_sample:
             st.session_state['sample_img'] = create_sample_thermal()
+            st.session_state['sample_id'] = time.time()
         input_img = st.session_state.get('sample_img')
+        input_id = f"sample_{st.session_state.get('sample_id', 0)}"
 
     if input_img is None:
         st.info("👆 Upload a thermal image above, or click **🧪 Use Sample Thermal Image** to test the model immediately.")
         return
 
-    # Process image
-    with st.spinner("⚡ Running NAFNet thermal enhancement..."):
-        result_img, latency_ms, applied_mode, summary = restore_thermal_image(model, device, input_img, mode)
+    # Process image (with session caching to allow instant resize without re-running model)
+    cache_key = f"{input_id}_{mode}"
+    if st.session_state.get('last_cache_key') != cache_key:
+        with st.spinner("⚡ Running NAFNet thermal enhancement..."):
+            result_img, latency_ms, applied_mode, summary = restore_thermal_image(model, device, input_img, mode)
+            st.session_state['last_result'] = (result_img, latency_ms, applied_mode, summary)
+            st.session_state['last_cache_key'] = cache_key
+    else:
+        result_img, latency_ms, applied_mode, summary = st.session_state['last_result']
 
     orig_w, orig_h = input_img.size
     new_w, new_h = result_img.size
@@ -407,20 +428,57 @@ def main():
 
     st.caption(f"**Action Note:** {summary}")
 
-    # Enhanced Thermal Output
-    st.markdown(f"### ✨ Enhanced Thermal Output (`{new_w}×{new_h}`)")
-    st.image(result_img, use_container_width=True)
-
-    # Download Button
-    buf = io.BytesIO()
-    result_img.save(buf, format="PNG")
-    btn_download = st.download_button(
-        label="📥 Download Enhanced Thermal Image (PNG)",
-        data=buf.getvalue(),
-        file_name="thermal_super_resolved.png",
-        mime="image/png",
-        type="primary",
+    # Dynamic styling for the image and download button size
+    st.markdown(
+        f"""
+        <style>
+        div[data-testid="stImage"] {{
+            max-width: {display_width}px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            display: flex !important;
+            justify-content: center !important;
+        }}
+        div[data-testid="stImage"] img {{
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        }}
+        div[data-testid="stDownloadButton"] {{
+            max-width: {display_width}px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }}
+        div[data-testid="stDownloadButton"] button {{
+            width: 100% !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
+
+    # Enhanced Thermal Output (Centered, Crisp Display)
+    col_l, col_center, col_r = st.columns([1, 2, 1])
+    with col_center:
+        st.markdown(
+            f"<h3 style='text-align: center; margin-top: 1rem;'>✨ Enhanced Thermal Output</h3>"
+            f"<p style='text-align: center; color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b></p>",
+            unsafe_allow_html=True,
+        )
+        st.image(result_img, use_container_width=True)
+
+        # Download Button
+        buf = io.BytesIO()
+        result_img.save(buf, format="PNG")
+        btn_download = st.download_button(
+            label="📥 Download Enhanced Thermal Image (PNG)",
+            data=buf.getvalue(),
+            file_name="thermal_super_resolved.png",
+            mime="image/png",
+            type="primary",
+            use_container_width=True,
+        )
 
 
 if __name__ == '__main__':

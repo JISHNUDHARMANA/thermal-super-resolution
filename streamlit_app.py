@@ -49,11 +49,6 @@ st.markdown(
         padding: 12px 16px;
         text-align: center;
     }
-    .pixelated-view img {
-        image-rendering: pixelated !important;
-        image-rendering: -moz-crisp-edges !important;
-        image-rendering: crisp-edges !important;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -412,23 +407,9 @@ def main():
 
     st.caption(f"**Action Note:** {summary}")
 
-    # Visual Comparison Tabs
-    tab_side, tab_compare = st.tabs(["🖼️ Side-by-Side Comparison", "🔍 Detail Inspection"])
-
-    with tab_side:
-        col_left, col_right = st.columns(2)
-        with col_left:
-            st.markdown(f"**Original LR Thermal Input (Sensor Pixels)** (`{orig_w}×{orig_h}`)")
-            st.markdown('<div class="pixelated-view">', unsafe_allow_html=True)
-            st.image(input_img, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-        with col_right:
-            st.markdown(f"**Super-Resolved Thermal Output** (`{new_w}×{new_h}`)")
-            st.image(result_img, use_container_width=True)
-
-    with tab_compare:
-        st.markdown("**High-Resolution Result:**")
-        st.image(result_img, use_container_width=True)
+    # Enhanced Thermal Output
+    st.markdown(f"### ✨ Enhanced Thermal Output (`{new_w}×{new_h}`)")
+    st.image(result_img, use_container_width=True)
 
     # Download Button
     buf = io.BytesIO()

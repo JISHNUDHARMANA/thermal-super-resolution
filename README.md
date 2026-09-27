@@ -13,7 +13,7 @@ Designed to enhance low-cost, low-resolution thermal sensor captures (e.g., 90×
   - **4× Direct Super-Resolution**: Upscales raw sensor resolution 4× spatially.
   - **Same-Size Restoration**: Restores pre-stretched blurry thermal captures back to sharp native clarity.
   - **Auto-Detect**: Automatically selects optimal restoration strategy based on input dimensions.
-- **Interactive Streamlit Web App**: Complete with side-by-side visual comparison, latency metrics, and 1-click PNG download.
+- **Interactive Streamlit Web App**: Complete with real-time thermal restoration, latency metrics, and 1-click PNG download.
 
 ---
 

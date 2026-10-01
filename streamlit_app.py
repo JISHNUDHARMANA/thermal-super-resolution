@@ -458,12 +458,101 @@ def main():
         unsafe_allow_html=True,
     )
 
-    # Enhanced Thermal Output (Centered, Crisp Display)
-    col_l, col_center, col_r = st.columns([1, 2, 1])
-    with col_center:
+# ============================================================
+# TEMPERATURE COLOR MAPPING LEGEND (MATCHING REFERENCE)
+# ============================================================
+def render_temperature_colormap():
+    st.markdown(
+        """
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; text-align: center; color: #ff8c00;">
+                🌡️ Thermal Temperature Mapping
+            </div>
+            <div style="font-size: 0.8rem; color: #999; text-align: center; margin-bottom: 12px;">
+                Body & Ambient Temperature Color Scale
+            </div>
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 4px; font-size: 0.88rem; text-align: center; color: #eee;">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.2); color: #aaa; font-weight: 700;">
+                        <th style="padding: 4px; width: 22%;">°F</th>
+                        <th style="padding: 4px; width: 20%;">Color</th>
+                        <th style="padding: 4px; width: 22%;">°C</th>
+                        <th style="padding: 4px; width: 36%; text-align: left; padding-left: 8px;">Heat Band</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">100°</td>
+                        <td style="background-color: #990000; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">38°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #ff4d4d; font-weight: 600;">Dark Red</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">90°</td>
+                        <td style="background-color: #D60000; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">32°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #ff6b6b; font-weight: 600;">Red</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">80°</td>
+                        <td style="background-color: #FF2A00; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">27°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #ff793f; font-weight: 600;">Scarlet</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">70°</td>
+                        <td style="background-color: #FA8231; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">21°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #ffa801; font-weight: 600;">Orange</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">60°</td>
+                        <td style="background-color: #FFC048; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">16°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #ffd32a; font-weight: 600;">Yellow</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">50°</td>
+                        <td style="background-color: #8BC34A; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">10°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #a8e063; font-weight: 600;">Rich Green</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">40°</td>
+                        <td style="background-color: #00A854; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">4°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #2ecc71; font-weight: 600;">Green</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">30°</td>
+                        <td style="background-color: #00A8FF; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">-1°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #70a1ff; font-weight: 600;">Sky Blue</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">20°</td>
+                        <td style="background-color: #2948FF; border-radius: 4px; height: 22px;"></td>
+                        <td style="font-weight: 700; color: #fff;">-7°</td>
+                        <td style="text-align: left; padding-left: 8px; color: #5352ed; font-weight: 600;">Blue</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.04); border-radius: 6px; font-size: 0.78rem; color: #bbb; text-align: center;">
+                🔥 <b>Body Heat:</b> 32°C - 38°C (90°F - 100°F)<br>
+                ❄️ <b>Ambient / Cold:</b> ≤ 21°C (≤ 70°F)
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+    # Enhanced Thermal Output & Temperature Scale (Side-by-Side Display)
+    col_out_img, col_out_scale = st.columns([3, 2])
+    with col_out_img:
         st.markdown(
-            f"<h3 style='text-align: center; margin-top: 1rem;'>✨ Enhanced Thermal Output</h3>"
-            f"<p style='text-align: center; color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b></p>",
+            f"<h3 style='margin-top: 0.5rem;'>✨ Enhanced Thermal Output</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b></p>",
             unsafe_allow_html=True,
         )
         st.image(result_img, use_container_width=True)
@@ -471,7 +560,7 @@ def main():
         # Download Button
         buf = io.BytesIO()
         result_img.save(buf, format="PNG")
-        btn_download = st.download_button(
+        st.download_button(
             label="📥 Download Enhanced Thermal Image (PNG)",
             data=buf.getvalue(),
             file_name="thermal_super_resolved.png",
@@ -479,6 +568,10 @@ def main():
             type="primary",
             use_container_width=True,
         )
+
+    with col_out_scale:
+        st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
+        render_temperature_colormap()
 
 
 if __name__ == '__main__':

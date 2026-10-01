@@ -548,11 +548,11 @@ def main():
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
         }}
-        .pixelated-input img {
+        .pixelated-input img {{
             image-rendering: pixelated !important;
             image-rendering: -moz-crisp-edges !important;
             image-rendering: crisp-edges !important;
-        }
+        }}
         </style>
         """,
         unsafe_allow_html=True,

@@ -548,29 +548,35 @@ def main():
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
         }}
+        .pixelated-input img {{
+            image-rendering: pixelated !important;
+            image-rendering: -moz-crisp-edges !important;
+            image-rendering: crisp-edges !important;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # Heavily blurred thermal optical degradation so the input is visibly full of blur
-    zoomed_blurry_input = input_img.resize((new_w, new_h), Image.Resampling.BILINEAR)
-    zoomed_blurry_input = zoomed_blurry_input.filter(ImageFilter.GaussianBlur(radius=3.5))
+    # Zoom low-resolution input using Nearest-Neighbor so the discrete pixel blocks are clearly visible
+    zoomed_pixel_input = input_img.resize((new_w, new_h), Image.Resampling.NEAREST)
 
     # 3-Column Display: Original Blurry Input | Enhanced Thermal Output | Temperature Scale
     col_in, col_out, col_scale = st.columns([1, 1, 0.9])
 
     with col_in:
         st.markdown(
-            f"<h3 style='margin-top: 0.5rem;'>📷 Blurry Thermal Input</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Baseline: <b>{orig_w} × {orig_h} px</b> (Full Sensor Blur)</p>",
+            f"<h3 style='margin-top: 0.5rem;'>📷 Low-Res Input (Pixelated)</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Sensor Grid: <b>{orig_w} × {orig_h} px</b> (Raw Blocky Pixels)</p>",
             unsafe_allow_html=True,
         )
+        st.markdown('<div class="pixelated-input">', unsafe_allow_html=True)
         st.image(
-            zoomed_blurry_input,
-            caption=f"Degraded Blurry Input ({orig_w}×{orig_h} ➔ {new_w}×{new_h} px)",
+            zoomed_pixel_input,
+            caption=f"Raw Sensor Pixel Grid ({orig_w}×{orig_h} ➔ {new_w}×{new_h} px)",
             use_container_width=True,
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col_out:
         st.markdown(

@@ -9,7 +9,7 @@ import time
 import io
 from pathlib import Path
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -547,26 +547,28 @@ def main():
         }}
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # Zoom the low-resolution input to match output resolution with smooth bicubic blur
-    zoomed_blurry_input = input_img.resize((new_w, new_h), Image.Resampling.BICUBIC)
+    # Heavily blurred thermal optical degradation so the input is visibly full of blur
+    zoomed_blurry_input = input_img.resize((new_w, new_h), Image.Resampling.BILINEAR)
+    zoomed_blurry_input = zoomed_blurry_input.filter(ImageFilter.GaussianBlur(radius=3.5))
 
     # 3-Column Display: Original Blurry Input | Enhanced Thermal Output | Temperature Scale
     col_in, col_out, col_scale = st.columns([1, 1, 0.9])
 
     with col_in:
         st.markdown(
-            f"<h3 style='margin-top: 0.5rem;'>📷 Blurry Input (Zoomed)</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Input: <b>{orig_w} × {orig_h} px</b> (Zoomed 4× — Blurry)</p>",
+            f"<h3 style='margin-top: 0.5rem;'>📷 Blurry Thermal Input</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Baseline: <b>{orig_w} × {orig_h} px</b> (Full Sensor Blur)</p>",
             unsafe_allow_html=True,
         )
         st.image(
             zoomed_blurry_input,
-            caption=f"Blurry Input Image (Zoomed {orig_w}×{orig_h} ➔ {new_w}×{new_h} px)",
+            caption=f"Degraded Blurry Input ({orig_w}×{orig_h} ➔ {new_w}×{new_h} px)",
             use_container_width=True,
         )
 

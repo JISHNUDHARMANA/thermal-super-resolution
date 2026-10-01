@@ -531,13 +531,13 @@ def main():
         div[data-testid="stImage"] img {{
             max-width: 100% !important;
             height: auto !important;
+            object-fit: contain !important;
             border-radius: 8px !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
         }}
         div[data-testid="stDownloadButton"] {{
-            max-width: {display_width}px !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+            max-width: 100% !important;
+            margin-top: 8px !important;
         }}
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
@@ -547,21 +547,38 @@ def main():
         unsafe_allow_html=True,
     )
 
-    # Enhanced Thermal Output & Temperature Scale (Side-by-Side Display)
-    col_out_img, col_out_scale = st.columns([3, 2])
-    with col_out_img:
+    # 3-Column Display: Original Blurry Input | Enhanced Thermal Output | Temperature Scale
+    col_in, col_out, col_scale = st.columns([1, 1, 0.9])
+
+    with col_in:
         st.markdown(
-            f"<h3 style='margin-top: 0.5rem;'>✨ Enhanced Thermal Output</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b></p>",
+            f"<h3 style='margin-top: 0.5rem;'>📷 Original Input Image</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Native Size: <b>{orig_w} × {orig_h} px</b> (Blurry / As Given)</p>",
             unsafe_allow_html=True,
         )
-        st.image(result_img, use_container_width=True)
+        st.image(
+            input_img,
+            caption=f"Original Blurry Input ({orig_w}×{orig_h} px)",
+            use_container_width=True,
+        )
+
+    with col_out:
+        st.markdown(
+            f"<h3 style='margin-top: 0.5rem;'>✨ Enhanced Thermal Output</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b> (NAFNet-SR 4×)</p>",
+            unsafe_allow_html=True,
+        )
+        st.image(
+            result_img,
+            caption=f"Restored High-Res Output ({new_w}×{new_h} px)",
+            use_container_width=True,
+        )
 
         # Download Button
         buf = io.BytesIO()
         result_img.save(buf, format="PNG")
         st.download_button(
-            label="📥 Download Enhanced Thermal Image (PNG)",
+            label="📥 Download Enhanced Image (PNG)",
             data=buf.getvalue(),
             file_name="thermal_super_resolved.png",
             mime="image/png",
@@ -569,7 +586,7 @@ def main():
             use_container_width=True,
         )
 
-    with col_out_scale:
+    with col_scale:
         st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
         render_temperature_colormap()
 

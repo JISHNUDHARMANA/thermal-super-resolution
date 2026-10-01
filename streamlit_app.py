@@ -547,41 +547,33 @@ def main():
         }}
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
-        }}
-        .pixelated-input img {{
-            image-rendering: pixelated !important;
-            image-rendering: -moz-crisp-edges !important;
-            image-rendering: crisp-edges !important;
-        }}
         </style>
         """,
         unsafe_allow_html=True,
     )
+
+    # Zoom the low-resolution input to match output resolution with smooth bicubic blur
+    zoomed_blurry_input = input_img.resize((new_w, new_h), Image.Resampling.BICUBIC)
 
     # 3-Column Display: Original Blurry Input | Enhanced Thermal Output | Temperature Scale
     col_in, col_out, col_scale = st.columns([1, 1, 0.9])
 
     with col_in:
         st.markdown(
-            f"<h3 style='margin-top: 0.5rem;'>📷 Original Input Image</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Native Size: <b>{orig_w} × {orig_h} px</b> (Raw Sensor Capture)</p>",
+            f"<h3 style='margin-top: 0.5rem;'>📷 Blurry Input (Zoomed)</h3>"
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Input: <b>{orig_w} × {orig_h} px</b> (Zoomed 4× — Blurry)</p>",
             unsafe_allow_html=True,
         )
-        st.markdown('<div class="pixelated-input">', unsafe_allow_html=True)
         st.image(
-            input_img,
-            caption=f"Original Thermal Input ({orig_w}×{orig_h} px - Raw Sensor Pixels)",
+            zoomed_blurry_input,
+            caption=f"Blurry Input Image (Zoomed {orig_w}×{orig_h} ➔ {new_w}×{new_h} px)",
             use_container_width=True,
         )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        with st.expander("🔍 View 1:1 Native Physical Size (80×60 px)"):
-            st.image(input_img, caption="1:1 Physical Resolution (Unscaled)", use_container_width=False)
 
     with col_out:
         st.markdown(
             f"<h3 style='margin-top: 0.5rem;'>✨ Enhanced Thermal Output</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Resolution: <b>{new_w} × {new_h} px</b> (NAFNet-SR 4×)</p>",
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Restored: <b>{new_w} × {new_h} px</b> (NAFNet-SR 4× Sharp)</p>",
             unsafe_allow_html=True,
         )
         st.image(

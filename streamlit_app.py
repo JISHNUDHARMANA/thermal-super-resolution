@@ -298,18 +298,19 @@ def restore_thermal_image(model, device, input_image, mode):
 # SYNTHETIC TEST SAMPLE GENERATOR
 # ============================================================
 def create_sample_thermal():
-    """Generate a realistic test thermal pattern if user has no image."""
-    h, w = 60, 90
+    """Return the real-world thermal test capture (80x60 sensor native)."""
+    sample_file = Path(__file__).parent / "sample_thermal.png"
+    if sample_file.exists():
+        return Image.open(sample_file).convert('RGB')
+
+    # Fallback synthetic pattern if file is missing
+    h, w = 60, 80
     y, x = np.ogrid[:h, :w]
-    # Heat spot 1 (person/engine)
     spot1 = np.exp(-((x - 30)**2 + (y - 30)**2) / 120.0)
-    # Heat spot 2
-    spot2 = 0.8 * np.exp(-((x - 65)**2 + (y - 25)**2) / 80.0)
-    # Background gradient & subtle noise
+    spot2 = 0.8 * np.exp(-((x - 55)**2 + (y - 25)**2) / 80.0)
     bg = 0.2 + 0.1 * np.sin(x / 10.0) + np.random.normal(0, 0.03, (h, w))
     raw = np.clip(spot1 + spot2 + bg, 0, 1)
 
-    # Colorize with iron-like thermal gradient
     r = np.clip(raw * 2.5, 0, 1)
     g = np.clip(raw * 1.8 - 0.2, 0, 1)
     b = np.clip(raw * 0.8 - 0.4, 0, 1)
@@ -489,6 +490,11 @@ def main():
             st.session_state['sample_id'] = time.time()
         input_img = st.session_state.get('sample_img')
         input_id = f"sample_{st.session_state.get('sample_id', 0)}"
+    else:
+        # Pre-load the real thermal sample image by default so user sees live output immediately
+        input_img = create_sample_thermal()
+        input_id = "default_sample_thermal"
+        st.session_state['sample_img'] = input_img
 
     if input_img is None:
         st.info("👆 Upload a thermal image above, or click **🧪 Use Sample Thermal Image** to test the model immediately.")
@@ -542,6 +548,11 @@ def main():
         div[data-testid="stDownloadButton"] button {{
             width: 100% !important;
         }}
+        .pixelated-input img {
+            image-rendering: pixelated !important;
+            image-rendering: -moz-crisp-edges !important;
+            image-rendering: crisp-edges !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -553,14 +564,19 @@ def main():
     with col_in:
         st.markdown(
             f"<h3 style='margin-top: 0.5rem;'>📷 Original Input Image</h3>"
-            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Native Size: <b>{orig_w} × {orig_h} px</b> (Blurry / As Given)</p>",
+            f"<p style='color: #888; font-size: 0.95rem; margin-top: -0.5rem;'>Native Size: <b>{orig_w} × {orig_h} px</b> (Raw Sensor Capture)</p>",
             unsafe_allow_html=True,
         )
+        st.markdown('<div class="pixelated-input">', unsafe_allow_html=True)
         st.image(
             input_img,
-            caption=f"Original Blurry Input ({orig_w}×{orig_h} px)",
+            caption=f"Original Thermal Input ({orig_w}×{orig_h} px - Raw Sensor Pixels)",
             use_container_width=True,
         )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        with st.expander("🔍 View 1:1 Native Physical Size (80×60 px)"):
+            st.image(input_img, caption="1:1 Physical Resolution (Unscaled)", use_container_width=False)
 
     with col_out:
         st.markdown(

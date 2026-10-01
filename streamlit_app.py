@@ -323,82 +323,82 @@ def create_sample_thermal():
 def render_temperature_colormap():
     st.markdown(
         """
-        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; text-align: center; color: #ff8c00;">
+        <div style="background: #ffffff; border: 2px solid #334155; border-radius: 12px; padding: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.12); max-width: 400px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 2px; text-align: center; color: #dc2626;">
                 🌡️ Thermal Temperature Mapping
             </div>
-            <div style="font-size: 0.8rem; color: #999; text-align: center; margin-bottom: 12px;">
+            <div style="font-size: 0.8rem; color: #475569; text-align: center; margin-bottom: 12px; font-weight: 600;">
                 Body & Ambient Temperature Color Scale
             </div>
-            <table style="width: 100%; border-collapse: separate; border-spacing: 0 4px; font-size: 0.88rem; text-align: center; color: #eee;">
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #1e293b; font-size: 0.9rem; text-align: center;">
                 <thead>
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.2); color: #aaa; font-weight: 700;">
-                        <th style="padding: 4px; width: 22%;">°F</th>
-                        <th style="padding: 4px; width: 20%;">Color</th>
-                        <th style="padding: 4px; width: 22%;">°C</th>
-                        <th style="padding: 4px; width: 36%; text-align: left; padding-left: 8px;">Heat Band</th>
+                    <tr style="background-color: #f1f5f9; border-bottom: 2px solid #1e293b;">
+                        <th style="padding: 7px 4px; border: 1.5px solid #1e293b; color: #000000; font-weight: 800; width: 20%;">°F</th>
+                        <th style="padding: 7px 4px; border: 1.5px solid #1e293b; color: #000000; font-weight: 800; width: 22%;">Color</th>
+                        <th style="padding: 7px 4px; border: 1.5px solid #1e293b; color: #000000; font-weight: 800; width: 20%;">°C</th>
+                        <th style="padding: 7px 8px; border: 1.5px solid #1e293b; color: #000000; font-weight: 800; width: 38%; text-align: left;">Heat Band</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">100°</td>
-                        <td style="background-color: #990000; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">38°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #ff4d4d; font-weight: 600;">Dark Red</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">100°</td>
+                        <td style="background-color: #8B0000; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">38°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Dark Red</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">90°</td>
-                        <td style="background-color: #D60000; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">32°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #ff6b6b; font-weight: 600;">Red</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">90°</td>
+                        <td style="background-color: #D80000; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">32°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Red</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">80°</td>
-                        <td style="background-color: #FF2A00; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">27°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #ff793f; font-weight: 600;">Scarlet</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">80°</td>
+                        <td style="background-color: #FF2600; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">27°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Scarlet</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">70°</td>
-                        <td style="background-color: #FA8231; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">21°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #ffa801; font-weight: 600;">Orange</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">70°</td>
+                        <td style="background-color: #FF8800; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">21°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Orange</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">60°</td>
-                        <td style="background-color: #FFC048; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">16°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #ffd32a; font-weight: 600;">Yellow</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">60°</td>
+                        <td style="background-color: #FFC400; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">16°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Yellow</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">50°</td>
-                        <td style="background-color: #8BC34A; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">10°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #a8e063; font-weight: 600;">Rich Green</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">50°</td>
+                        <td style="background-color: #8CD036; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">10°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Rich Green</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">40°</td>
-                        <td style="background-color: #00A854; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">4°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #2ecc71; font-weight: 600;">Green</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">40°</td>
+                        <td style="background-color: #00A651; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">4°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Green</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">30°</td>
-                        <td style="background-color: #00A8FF; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">-1°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #70a1ff; font-weight: 600;">Sky Blue</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">30°</td>
+                        <td style="background-color: #0099FF; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">-1°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Sky Blue</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #fff;">20°</td>
-                        <td style="background-color: #2948FF; border-radius: 4px; height: 22px;"></td>
-                        <td style="font-weight: 700; color: #fff;">-7°</td>
-                        <td style="text-align: left; padding-left: 8px; color: #5352ed; font-weight: 600;">Blue</td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">20°</td>
+                        <td style="background-color: #2640FF; border: 1.5px solid #1e293b; height: 26px;"></td>
+                        <td style="font-weight: 800; color: #000000; border: 1.5px solid #1e293b; padding: 6px 2px; background: #ffffff;">-7°</td>
+                        <td style="text-align: left; padding-left: 10px; color: #000000; font-weight: 700; border: 1.5px solid #1e293b; background: #ffffff;">Blue</td>
                     </tr>
                 </tbody>
             </table>
-            <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.04); border-radius: 6px; font-size: 0.78rem; color: #bbb; text-align: center;">
-                🔥 <b>Body Heat:</b> 32°C - 38°C (90°F - 100°F)<br>
-                ❄️ <b>Ambient / Cold:</b> ≤ 21°C (≤ 70°F)
+            <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; color: #0f172a; text-align: center; line-height: 1.5;">
+                🔥 <b style="color: #b91c1c;">Body Heat Range:</b> 32°C – 38°C (90°F – 100°F)<br>
+                ❄️ <b style="color: #0369a1;">Ambient / Cold Range:</b> ≤ 21°C (≤ 70°F)
             </div>
         </div>
         """,

@@ -471,7 +471,18 @@ def main():
         )
 
     with col_sample:
-        use_sample = st.button("🧪 Use Sample Thermal Image", use_container_width=True)
+        if st.session_state.get('sample_active', False):
+            if st.button("✖️ Clear Sample Image", use_container_width=True, help="Remove the sample image"):
+                st.session_state['sample_active'] = False
+                st.session_state.pop('sample_img', None)
+                st.session_state.pop('last_cache_key', None)
+                st.session_state.pop('last_result', None)
+                st.rerun()
+        else:
+            if st.button("🧪 Use Sample Thermal Image", use_container_width=True, help="Test the model with a pre-loaded 80×60 thermal capture"):
+                st.session_state['sample_active'] = True
+                st.session_state['sample_img'] = create_sample_thermal()
+                st.rerun()
 
     uploaded_file = st.file_uploader(
         "Upload a low-resolution or blurry thermal image (PNG, JPG, TIFF, BMP):",
@@ -482,22 +493,41 @@ def main():
     input_img = None
     input_id = None
     if uploaded_file is not None:
+        # User uploaded their own image: deactivate sample mode
+        st.session_state['sample_active'] = False
+        st.session_state.pop('sample_img', None)
         input_img = Image.open(uploaded_file).convert('RGB')
         input_id = f"upload_{uploaded_file.name}_{uploaded_file.size}"
-    elif use_sample or 'sample_img' in st.session_state:
-        if use_sample:
+    elif st.session_state.get('sample_active', False):
+        if 'sample_img' not in st.session_state or st.session_state['sample_img'] is None:
             st.session_state['sample_img'] = create_sample_thermal()
-            st.session_state['sample_id'] = time.time()
-        input_img = st.session_state.get('sample_img')
-        input_id = f"sample_{st.session_state.get('sample_id', 0)}"
+        input_img = st.session_state['sample_img']
+        input_id = "sample_thermal"
     else:
-        # Pre-load the real thermal sample image by default so user sees live output immediately
-        input_img = create_sample_thermal()
-        input_id = "default_sample_thermal"
-        st.session_state['sample_img'] = input_img
+        # Awaiting input: do not run inference or display default outputs
+        input_img = None
+        input_id = None
 
     if input_img is None:
-        st.info("👆 Upload a thermal image above, or click **🧪 Use Sample Thermal Image** to test the model immediately.")
+        st.info("👆 **Awaiting Thermal Input:** Please upload a low-resolution or blurry thermal image above, or click **🧪 Use Sample Thermal Image** to test the model.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        col_info, col_legend = st.columns([1.2, 0.8])
+        with col_info:
+            st.markdown(
+                """
+                ### 🚀 Getting Started
+                1. **Upload an Image:** Use the file uploader above to select any low-resolution or blurry thermal capture.
+                2. **Or Test with Sample:** Click **🧪 Use Sample Thermal Image** to test with an authentic 80×60 thermal sensor capture.
+                3. **Select Enhancement Mode:**
+                   - **4× Super-Resolution (Small / Sensor Native):** Direct 4× spatial upscaling for raw low-res sensor images (e.g. 80×60 ➔ 320×240).
+                   - **Restore at Same Size:** Sharpens and removes blur from thermal captures already stretched to high dimensions.
+                   - **Auto-Detect:** Automatically selects the best restoration pipeline according to image dimensions.
+                4. **Inspect & Download:** Review side-by-side comparison, zoom sensor pixels, and download high-definition restored thermal outputs.
+                """
+            )
+        with col_legend:
+            render_temperature_colormap()
         return
 
     # Process image (with session caching to allow instant resize without re-running model)

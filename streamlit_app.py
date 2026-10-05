@@ -222,7 +222,10 @@ def load_model():
     loaded = False
     if model_path:
         try:
-            ckpt = torch.load(model_path, map_location=device)
+            try:
+                ckpt = torch.load(model_path, map_location=device, weights_only=False)
+            except (TypeError, ValueError):
+                ckpt = torch.load(model_path, map_location=device)
             state = extract_state_dict(ckpt)
             model.load_state_dict(state)
             loaded = True
@@ -471,7 +474,7 @@ def main():
         )
 
     with col_sample:
-        if st.session_state.get('sample_active', False):
+        if st.session_state.get('sample_active', True):
             if st.button("✖️ Clear Sample Image", use_container_width=True, help="Remove the sample image"):
                 st.session_state['sample_active'] = False
                 st.session_state.pop('sample_img', None)
@@ -498,7 +501,7 @@ def main():
         st.session_state.pop('sample_img', None)
         input_img = Image.open(uploaded_file).convert('RGB')
         input_id = f"upload_{uploaded_file.name}_{uploaded_file.size}"
-    elif st.session_state.get('sample_active', False):
+    elif st.session_state.get('sample_active', True):
         if 'sample_img' not in st.session_state or st.session_state['sample_img'] is None:
             st.session_state['sample_img'] = create_sample_thermal()
         input_img = st.session_state['sample_img']

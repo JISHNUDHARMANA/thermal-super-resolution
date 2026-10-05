@@ -1,10 +1,17 @@
 """
 Interactive Dual-Mode Web Demo for Thermal Super-Resolution & Enhancement.
 Supports:
-1. 4× Super-Resolution (Raw low-res e.g. 90×60 -> 360×240)
-2. Same-Size Enhancement (Pre-stretched blurry image -> Sharp image at same size)
-3. Auto-Detect based on input dimensions.
+1. Streamlit Application (default / deployed on Streamlit Cloud)
+2. Standalone Gradio Web Demo (if gradio is installed)
 """
+
+import sys
+
+# Auto-dispatch: If executed by Streamlit (e.g. Streamlit Cloud defaults to app.py)
+if "streamlit" in sys.modules or any("streamlit" in str(arg).lower() for arg in sys.argv):
+    import streamlit_app
+    streamlit_app.main()
+    sys.exit(0)
 
 import os
 import time
@@ -14,7 +21,11 @@ from PIL import Image
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import gradio as gr
+
+try:
+    import gradio as gr
+except ImportError:
+    gr = None
 
 
 # ============================================================
@@ -276,42 +287,52 @@ def process_image(input_image, mode):
 # ============================================================
 # GRADIO INTERFACE
 # ============================================================
-with gr.Blocks(title="Thermal Image Super-Resolution & Restoration", theme=gr.themes.Soft()) as demo:
-    gr.Markdown(
-        """
-        # 🔥 Thermal Vision Super-Resolution & Restoration
-        ### Powered by Lightweight NAFNet (0.47M Parameters)
-        Choose between **4× Super-Resolution** for raw small sensor images or **Same-Size Restoration** for stretched blurry thermal photos.
-        """
-    )
+def create_gradio_demo():
+    if gr is None:
+        raise ImportError("Gradio is not installed. Run: pip install gradio")
 
-    with gr.Row():
-        with gr.Column(scale=1):
-            input_ui = gr.Image(type="numpy", label="Upload Thermal Image")
-            
-            mode_selector = gr.Radio(
-                choices=[
-                    "Auto-Detect",
-                    "4× Super-Resolution (Small / Raw Sensor)",
-                    "Restore at Same Size (Big but Blurry)",
-                ],
-                value="Auto-Detect",
-                label="Select Enhancement Method",
-                info="Auto-Detect automatically chooses 4× for small images (≤160×120) and Same-Size Restoration for larger blurry images.",
-            )
+    with gr.Blocks(title="Thermal Image Super-Resolution & Restoration", theme=gr.themes.Soft()) as demo:
+        gr.Markdown(
+            """
+            # 🔥 Thermal Vision Super-Resolution & Restoration
+            ### Powered by Lightweight NAFNet (0.47M Parameters)
+            Choose between **4× Super-Resolution** for raw small sensor images or **Same-Size Restoration** for stretched blurry thermal photos.
+            """
+        )
 
-            btn_run = gr.Button("⚡ Enhance Thermal Image", variant="primary", size="lg")
-            stats_box = gr.Markdown("Ready to process...")
+        with gr.Row():
+            with gr.Column(scale=1):
+                input_ui = gr.Image(type="numpy", label="Upload Thermal Image")
+                
+                mode_selector = gr.Radio(
+                    choices=[
+                        "Auto-Detect",
+                        "4× Super-Resolution (Small / Raw Sensor)",
+                        "Restore at Same Size (Big but Blurry)",
+                    ],
+                    value="Auto-Detect",
+                    label="Select Enhancement Method",
+                    info="Auto-Detect automatically chooses 4× for small images (≤160×120) and Same-Size Restoration for larger blurry images.",
+                )
 
-        with gr.Column(scale=1):
-            output_ui = gr.Image(type="pil", label="Enhanced Thermal Output")
+                btn_run = gr.Button("⚡ Enhance Thermal Image", variant="primary", size="lg")
+                stats_box = gr.Markdown("Ready to process...")
 
-    btn_run.click(
-        fn=process_image,
-        inputs=[input_ui, mode_selector],
-        outputs=[output_ui, stats_box],
-    )
+            with gr.Column(scale=1):
+                output_ui = gr.Image(type="pil", label="Enhanced Thermal Output")
+
+        btn_run.click(
+            fn=process_image,
+            inputs=[input_ui, mode_selector],
+            outputs=[output_ui, stats_box],
+        )
+    return demo
+
 
 if __name__ == '__main__':
-    # Launch for Hugging Face Spaces (or local browser)
-    demo.launch()
+    if gr is not None:
+        demo = create_gradio_demo()
+        demo.launch()
+    else:
+        import streamlit_app
+        streamlit_app.main()
